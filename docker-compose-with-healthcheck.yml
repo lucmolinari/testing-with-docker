@@ -1,0 +1,23 @@
+version: '2.3'
+
+services:
+  db_server:
+    image: mysql:5.7
+    ports:
+      - 3306
+    environment:
+      MYSQL_DATABASE: testing_with_docker_db
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ${PWD}/scripts/:/scripts
+    healthcheck:
+      test: ["CMD-SHELL", "mysql -u root -proot testing_with_docker_db -e 'show tables;'"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  wait_services:
+    image: busybox
+    depends_on:
+      db_server:
+        condition: service_healthy
